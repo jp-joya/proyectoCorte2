@@ -1,0 +1,95 @@
+program                 ::= statement_list
+
+statement_list          ::= statement statement_list | ε
+
+statement               ::= simple_statement
+                        | compound_statement
+
+simple_statement        ::= expression_statement ##
+                        | print_statement
+                        | assignment_statement 
+                        | pass_statement
+                        | import_statement
+                        | return_statement 
+
+compound_statement      ::= if_statement
+                        | while_statement
+                        | for_statement
+                        | function_definition
+                        | class_definition
+                        | try_statement
+                        | suite ##
+
+pass_statement          ::= tk_pass
+
+import_statement        ::= tk_import module_name | tk_from module_name tk_import identifier_list
+
+return_statement        ::= tk_return expression | tk_return
+
+module_name             ::= identifier (tk_delim_. identifier)*
+
+identifier_list         ::= identifier (tk_delim_, identifier)* | ε
+
+expression_statement    ::= expression
+
+print_statement         ::= tk_print tk_delim_( expression tk_delim_)
+
+assignment_statement    ::= identifier tk_op_= expression
+
+if_statement            ::= tk_if expression tk_delim_: suite (tk_elif expression tk_delim_: suite)* [tk_else tk_delim_: suite]
+
+while_statement         ::= tk_while expression tk_delim_: suite
+
+for_statement           ::= tk_for identifier tk_in expression tk_delim_: suite
+
+function_definition     ::= tk_def identifier tk_delim_( parameter_list tk_delim_) tk_delim_: suite
+
+parameter_list          ::= identifier (tk_delim_, identifier)* | ε
+
+class_definition        ::= tk_class identifier (tk_delim_( identifier tk_delim_))? tk_delim_: suite
+
+suite                   ::= statement_list | tk_pass
+
+try_statement           ::= tk_try tk_delim_: suite (tk_except (identifier (tk_delim_, identifier)? | ε tk_delim_: expression)? tk_delim_: suite)* [tk_finally tk_delim_: suite]
+
+expression              ::= or_expression
+
+or_expression           ::= and_expression (tk_or and_expression)*
+
+and_expression          ::= not_expression (tk_and not_expression)*
+
+not_expression          ::= tk_not not_expression | comparison
+
+comparison              ::= arithmetic_expression ((tk_op_== | tk_op_!= | tk_op_< | tk_op_> | tk_op_<= | tk_op_>=) arithmetic_expression)*
+
+arithmetic_expression    ::= term ((tk_op_+ | tk_op_-) term)*
+
+term                    ::= factor (("" | tk_delim_/ | tk_delim_%) factor)
+
+factor                  ::= tk_delim_( expression tk_delim_)
+                        | number
+                        | identifier
+                        | string
+                        | function_call
+                        | list
+                        | dictionary
+                        | unary_operation
+
+unary_operation         ::= (tk_op_+ | tk_op_-) factor
+
+function_call           ::= identifier tk_delim_( argument_list tk_delim_)
+
+list                    ::= tk_delim_[ (expression (tk_delim_, expression)*)? tk_delim_]
+
+dictionary              ::= tk_delim_{ (key_value_pair (tk_delim_, key_value_pair)*)? tk_delim_}
+
+identifier              ::= id
+
+number                  ::= tk_entero | tk_float
+
+string                  ::= tk_cadena
+
+key_value_pair          ::= expression tk_delim_: expression
+
+argument_list           ::= expression (tk_delim_, expression)* | ε
+
